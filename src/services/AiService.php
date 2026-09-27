@@ -1,8 +1,8 @@
 <?php
 
-class GrokException extends Exception {}
+class AiServiceException extends Exception {}
 
-class GrokService
+class AiService
 {
     private string $apiKey;
     private string $apiUrl;
@@ -11,17 +11,17 @@ class GrokService
     public function __construct()
     {
         $config = require __DIR__ . '/../../config/config.php';
-        $this->apiKey = $config['grok']['api_key'];
-        $this->apiUrl = $config['grok']['api_url'];
-        $this->model = $config['grok']['model'];
+        $this->apiKey = $config['ai']['api_key'];
+        $this->apiUrl = $config['ai']['api_url'];
+        $this->model = $config['ai']['model'];
 
         if ($this->apiKey === '') {
-            throw new GrokException('GROK_API_KEY is not set in .env');
+            throw new AiServiceException('GROQ_API_KEY is not set in .env');
         }
     }
 
     /**
-     * Sends resume text to Grok and returns a fully structured analysis array
+     * Sends resume text to the AI and returns a fully structured analysis array
      * matching RESUME_ANALYSIS_SCHEMA below.
      */
     public function analyzeResume(string $resumeText): array
@@ -37,6 +37,8 @@ as accurately as possible. Rules:
   (clarity, impact, structure, achievements).
 - strengths, weaknesses, missing_skills and suggestions must be specific and actionable, not generic.
 - recommended_roles should be realistic job titles this candidate is currently qualified for.
+- resume_summary must never be an empty string. Always write 2-3 sentences summarizing the
+  candidate, even if the resume is short or sparse.
 PROMPT;
 
         $payload = [
@@ -60,7 +62,7 @@ PROMPT;
         $parsed = json_decode($raw, true);
 
         if (!is_array($parsed)) {
-            throw new GrokException('Grok returned a response that could not be parsed as JSON.');
+            throw new AiServiceException('The AI returned a response that could not be parsed as JSON.');
         }
 
         $parsed['_raw_ai_response'] = $raw;
@@ -68,9 +70,9 @@ PROMPT;
     }
 
     /**
-     * Given a resume's extracted skills and a job's required skills, asks Grok
+     * Given a resume's extracted skills and a job's required skills, asks the AI
      * to write a short human-readable explanation of the match. The match
-     * percentage itself is calculated in PHP (JobMatcher), not by Grok.
+     * percentage itself is calculated in PHP (JobMatcher), not by the AI.
      */
     public function explainJobMatch(array $candidateSkills, array $requiredSkills, array $matchedSkills, array $missingSkills, int $matchPercentage): string
     {
@@ -118,14 +120,14 @@ PROMPT;
         curl_close($ch);
 
         if ($response === false) {
-            throw new GrokException('Failed to reach Grok API: ' . $curlError);
+            throw new AiServiceException('Failed to reach the AI API: ' . $curlError);
         }
 
         $decoded = json_decode($response, true);
 
         if ($httpCode < 200 || $httpCode >= 300) {
             $message = $decoded['error']['message'] ?? $response;
-            throw new GrokException("Grok API error (HTTP $httpCode): $message");
+            throw new AiServiceException("AI API error (HTTP $httpCode): $message");
         }
 
         return $decoded['choices'][0]['message']['content'] ?? '';

@@ -55,9 +55,9 @@ foreach ($jobs as &$job) {
     if (!$existing) {
         $explanation = '';
         try {
-            $grok = new GrokService();
-            $explanation = $grok->explainJobMatch($candidateSkills, $requiredSkills, $result['matched'], $result['missing'], $result['percentage']);
-        } catch (GrokException $e) {
+            $ai = new AiService();
+            $explanation = $ai->explainJobMatch($candidateSkills, $requiredSkills, $result['matched'], $result['missing'], $result['percentage']);
+        } catch (AiServiceException $e) {
             $explanation = 'AI explanation unavailable right now.';
         }
         $insertStmt->execute([

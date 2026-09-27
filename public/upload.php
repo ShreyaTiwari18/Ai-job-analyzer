@@ -54,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt->execute([Auth::user()['id'], $originalName, $storedName, $extension, $text]);
                     $resumeId = (int) $db->lastInsertId();
 
-                    $grok = new GrokService();
-                    $analysis = $grok->analyzeResume($text);
+                    $ai = new AiService();
+                    $analysis = $ai->analyzeResume($text);
 
                     $stmt = $db->prepare(
                         'INSERT INTO resume_analysis (
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     header('Location: resume_result.php?id=' . $resumeId);
                     exit;
-                } catch (ResumeParserException|GrokException $e) {
+                } catch (ResumeParserException|AiServiceException $e) {
                     unlink($destination);
                     $errors[] = $e->getMessage();
                 }
@@ -106,7 +106,7 @@ require __DIR__ . '/partials/header.php';
         <div class="card p-4 mt-4">
             <h3 class="mb-3">Upload your resume</h3>
             <p class="text-muted">PDF or DOCX, up to <?= $config['app']['upload_max_mb'] ?>MB. We'll extract the text and
-                send it to Grok for a full analysis: skills, scores, strengths/weaknesses, and suggestions.</p>
+                send it to our AI for a full analysis: skills, scores, strengths/weaknesses, and suggestions.</p>
             <?php foreach ($errors as $error): ?>
                 <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
             <?php endforeach; ?>
