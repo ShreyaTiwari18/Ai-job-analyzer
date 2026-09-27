@@ -25,23 +25,29 @@ structured AI analysis (skills, ATS score, strengths/weaknesses, suggestions) fr
 
 ## Setup (XAMPP)
 
-1. Clone this repo into `C:\xampp\htdocs\resume-analyzer-ai`.
+1. Clone this repo into `C:\xampp\htdocs\Ai-job-analyzer`.
 2. Start Apache and MySQL in the XAMPP control panel.
-3. Install PHP dependencies:
+3. In `C:\xampp\php\php.ini`, uncomment (remove the leading `;` from) these two lines,
+   then restart Apache — they're required by the DOCX parser:
+   ```
+   extension=gd
+   extension=zip
+   ```
+4. Install PHP dependencies:
    ```
    composer install
    ```
-4. Create the database:
+5. Create the database:
    ```
    mysql -u root -p < database/schema.sql
    ```
-5. Copy `.env.example` to `.env` and fill in your Grok API key (get one at
+6. Copy `.env.example` to `.env` and fill in your Grok API key (get one at
    https://console.x.ai) and your local DB credentials.
-6. Create the first admin account:
+7. Create the first admin account:
    ```
    php database/seed_admin.php
    ```
-7. Visit `http://localhost/resume-analyzer-ai/public/` in your browser.
+8. Visit `http://localhost/Ai-job-analyzer/public/` in your browser.
 
 ## Project structure
 

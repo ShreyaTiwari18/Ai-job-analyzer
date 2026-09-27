@@ -4,7 +4,7 @@
     "require": {
         "php": ">=8.1",
         "smalot/pdfparser": "^2.9",
-        "phpoffice/phpword": "^1.2"
+        "phpoffice/phpword": "^1.4"
     },
     "autoload": {
         "classmap": ["src/"]

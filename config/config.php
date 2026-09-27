@@ -42,7 +42,7 @@ return [
         'model' => env('GROK_MODEL', 'grok-4.7'),
     ],
     'app' => [
-        'url' => env('APP_URL', 'http://localhost/resume-analyzer-ai/public'),
+        'url' => env('APP_URL', 'http://localhost/Ai-job-analyzer/public'),
         'upload_max_mb' => (int) env('UPLOAD_MAX_MB', '5'),
     ],
 ];
